@@ -49,8 +49,8 @@ cDIV_JVM_COMMAND = "idiv"
 cPRINT_COMMAND = "\tgetstatic java/lang/System/out Ljava/io/PrintStream;\n\tswap\n\tinvokevirtual java/io/PrintStream.println(I)V\n"
 
 cICONST_MAX = 4
-cBIPUSH_MAX = 255
-cSIPUSH_MAX = 65535
+cBIPUSH_MAX = 127
+cSIPUSH_MAX = 32767
 
 --- AUXILIARY ---
 getIntType :: Integer -> String 
@@ -108,10 +108,10 @@ evalExpBinOp e1 e2 op isCommutative = do
 
     case (val1, val2) of
         (Node leftValue leftDepth, Node rightValue rightDepth) -> do 
-            if leftDepth > rightDepth then -- balancing Nodes on stack
+            if leftDepth >= rightDepth then -- balancing Nodes on stack
                 return $ 
                     Node 
-                    (leftValue <> rightValue <> (fromString ((if isCommutative then "\t" else "\tswap\n\t") ++ op ++ "\n")))
+                    (leftValue <> rightValue <> (fromString ("\t" ++ op ++ "\n")))
                     (max leftDepth (rightDepth + 1))
             else 
                 return $ 
